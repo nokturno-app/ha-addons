@@ -1,7 +1,7 @@
 name: Luna Absolute Cinema
-version: "1.7.2"
+version: "1.7.5"
 slug: luna
-description: Luna Absolute Cinema — Stremio/Nuvio/Kodi server pro přehrávání z WebShare. Novou verzi Luny nahraješ přímo přes webové rozhraní doplňku (tlačítko níž, přes HA jen pro adminy) — jinak si addon binárku vezme z /share/luna/ (rozpozná architekturu automaticky, jde i přepnout v nastavení) nebo ji stáhne z adresy v nastavení.
+description: Luna Absolute Cinema – Stremio/Nuvio/Kodi server pro přehrávání z WebShare. Novou verzi Luny nahraješ přímo přes webové rozhraní doplňku (tlačítko níž, přes HA jen pro adminy) – jinak si addon binárku vezme z /share/luna/ (rozpozná architekturu automaticky, jde i přepnout v nastavení) nebo ji stáhne z adresy v nastavení.
 url: https://github.com/nokturno-app/ha-addons/tree/main/luna
 arch:
   - amd64
