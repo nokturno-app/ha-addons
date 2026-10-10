@@ -23,7 +23,7 @@ else
 fi
 echo "[luna] architektura: $ARCH (nastavení: $ARCH_OPT)"
 export ARCH
-export WEBUI_PORT=7130
+export WEBUI_PORT=7131
 
 # Webové rozhraní doplňku (stav, upload binárky, odkaz na /setup Luny) — běží
 # na pozadí nezávisle na tom, jestli/jak Luna zrovna běží.

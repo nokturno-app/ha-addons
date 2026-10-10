@@ -18,7 +18,7 @@ SHARE_DIR = "/share/luna"
 VERSION_FILE = "/data/luna_version.txt"
 RESTART_FLAG = "/data/.restart_flag"
 ARCH = os.environ.get("ARCH", "amd64")
-WEBUI_PORT = int(os.environ.get("WEBUI_PORT", "7130"))
+WEBUI_PORT = int(os.environ.get("WEBUI_PORT", "7131"))
 # Ingress Supervisoru chodí jen z téhle adresy (síť hassio). Přímý přístup z LAN,
 # tailnetu ani z jiných doplňků se nepouští — upload by jinak spustil cizí kód.
 INGRESS_CLIENT = "172.30.32.2"
