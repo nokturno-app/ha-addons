@@ -11,6 +11,7 @@ import json
 import os
 import re
 import socket
+import urllib.request
 
 CONFIG_PATH = "/data/options.json"
 ICON_PATH = "/icon.png"
@@ -59,6 +60,15 @@ def read_version():
         with open(VERSION_FILE) as f:
             return f.read().strip()
     except FileNotFoundError:
+        return None
+
+
+def running_version():
+    """Verze běžící Luny z jejího manifestu (po vlastní aktualizaci je jediná pravdivá)."""
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{luna_port()}/manifest.json", timeout=2) as r:
+            return json.load(r).get("version")
+    except Exception:
         return None
 
 
@@ -146,7 +156,9 @@ input[type=file]::file-selector-button:hover{{background:var(--okraj)}}
 
 <div class="panel">
   <h2>Nahrát novou verzi</h2>
-  <p class="hint">Stáhni novou Lunu z fóra <a href="{forum_url}" target="_blank" rel="noopener">stremio.cz</a>
+  <p class="hint">Luna se aktualizuje sama (do 30 s po startu, pak každých 6 h), pokud
+  v nastavení doplňku není zapnuté <code>no_update</code>. Ruční nahrání je jen pro výjimky.
+  Stáhni novou Lunu z fóra <a href="{forum_url}" target="_blank" rel="noopener">stremio.cz</a>
   (vlákno „Luna: Absolute Cinema"). Pro tenhle doplněk vyber přesně soubor
   <code>luna-&lt;verze&gt;-{expected_suffix}</code> — žádný windows/macos/apk balíček.</p>
   <form method="post" action="upload" enctype="multipart/form-data">
@@ -164,7 +176,7 @@ input[type=file]::file-selector-button:hover{{background:var(--okraj)}}
 
 
 def render(handler, message=""):
-    version = read_version() or "neznámá (nahraj binárku, nebo počkej na start)"
+    version = running_version() or read_version() or "neznámá (nahraj binárku, nebo počkej na start)"
     running = is_luna_running()
     host = html.escape(handler.headers.get("Host", "").split(":")[0] or "HOST")
     page = PAGE_TMPL.format(

@@ -11,7 +11,9 @@ Tlačítko **Otevřít webové rozhraní** v Home Assistantu (nebo panel **Luna*
 - formulář pro nahrání binárky přímo z prohlížeče — s nápovědou na přesný název souboru pro tuhle architekturu,
 - tlačítko na skutečné nastavení Luny (`/setup`).
 
-Po nahrání addon binárku sám ověří (odmítne soubor pro jinou architekturu), uloží do `/share/luna/` a Lunu restartuje — bez restartu celého addonu. Verzi si stránka přečte přímo z názvu nahraného souboru (např. `luna-1_7_0-linux-amd64` → `1.7.0`).
+Po nahrání addon binárku sám ověří (odmítne soubor pro jinou architekturu), uloží do `/share/luna/` a Lunu restartuje — bez restartu celého addonu. Verzi stránka ukazuje podle běžící Luny.
+
+Ruční nahrání většinou není potřeba: Luna se sama aktualizuje do 30 s po startu a pak každých 6 h (pokud nemáš zapnuté `no_update`). Binárku ze `/share/luna/` doplněk převezme jen tehdy, když se tam změní, takže samoaktualizaci nepřepíše.
 
 Samba/SFTP do `/share/luna/` (níž) pořád funguje jako alternativa, hlavně když chceš mít binárky pro víc architektur připravené najednou.
 
@@ -46,7 +48,7 @@ Addon si binárku uloží do `/data` a při každém startu ji ze sdílené slo�
 | `port` | 7126 | HTTP port |
 | `https_port` | 7127 | HTTPS port (Stremio v LAN ho vyžaduje) |
 | `enable_https` | true | zapne HTTPS s certifikátem local-ip.co |
-| `no_update` | true | vypne autoaktualizaci uvnitř Luny (verzi řídíš binárkou) |
+| `no_update` | false | vypne autoaktualizaci uvnitř Luny (verzi pak řídíš jen nahranou binárkou) |
 
 ## Použití
 

@@ -5,7 +5,7 @@ PORT=$(jq -r '.port // 7126' "$CONFIG")
 HTTPS_PORT=$(jq -r '.https_port // 7127' "$CONFIG")
 # pozor: jq „//“ bere false jako null → false by se změnilo na true
 ENABLE_HTTPS=$(jq -r 'if .enable_https == null then true else .enable_https end' "$CONFIG")
-NO_UPDATE=$(jq -r 'if .no_update == null then true else .no_update end' "$CONFIG")
+NO_UPDATE=$(jq -r 'if .no_update == null then false else .no_update end' "$CONFIG")
 BIN_URL=$(jq -r '.luna_binary_url // ""' "$CONFIG")
 ARCH_OPT=$(jq -r '.luna_arch // "auto"' "$CONFIG")
 BIN=/data/luna
@@ -35,6 +35,16 @@ cd /data
 
 RESTART_FLAG=/data/.restart_flag
 rm -f "$RESTART_FLAG"
+# Kontrolní součet binárky, kterou jsme naposledy převzali ze /share/luna/. Binárku
+# ze sdílené složky bereme jen tehdy, když se tam změnila (nové nahrání), jinak by
+# každý restart přepsal verzi, na kterou se Luna mezitím sama aktualizovala.
+SHARE_SUM=/data/.share_bin.sha256
+
+# Luna se po vlastní aktualizaci restartuje. Bez „supervisoru“ se sama znovu spustí
+# přes fork-exec (a to ještě staré binárky luna.backup) a odpojí se od téhle smyčky,
+# takže by obsadila port. S INVOCATION_ID si myslí, že ji hlídá systemd: jen se
+# ukončí a smyčka níž ji spustí znovu, už s novou binárkou.
+export INVOCATION_ID=ha-addon-luna
 
 # Smyčka místo jednorázového `exec`: umožňuje restartovat Lunu po nahrání nové
 # binárky přes webui, aniž by se restartoval celý addon.
@@ -51,9 +61,13 @@ while true; do
   fi
 
   if [ -n "$SHARE_BIN" ]; then
-    if ! cmp -s "$SHARE_BIN" "$BIN"; then
-      echo "[luna] beru binárku z $SHARE_BIN"
-      cp "$SHARE_BIN" "$BIN"
+    SUM=$(sha256sum "$SHARE_BIN" | cut -d' ' -f1)
+    if [ ! -f "$BIN" ] || [ "$SUM" != "$(cat "$SHARE_SUM" 2>/dev/null)" ]; then
+      if ! cmp -s "$SHARE_BIN" "$BIN"; then
+        echo "[luna] beru binárku z $SHARE_BIN"
+        cp "$SHARE_BIN" "$BIN"
+      fi
+      echo "$SUM" > "$SHARE_SUM"
     fi
   elif [ ! -f "$BIN" ] && [ -n "$BIN_URL" ]; then
     BIN_URL_RESOLVED="${BIN_URL//\{arch\}/$ARCH}"
